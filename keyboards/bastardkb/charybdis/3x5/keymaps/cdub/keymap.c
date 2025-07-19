@@ -91,11 +91,10 @@ static uint16_t auto_pointer_layer_timer = 0;
  * from the base layer to enable auto-repeat.
  */
 #define LAYOUT_LAYER_FUNCTION                                                                 \
-    _______________DEAD_HALF_ROW_______________, KC_PSCR,   KC_F7,   KC_F8,   KC_F9,  KC_F12, \
-    _______________DEAD_HALF_ROW_______________, KC_SCRL,   KC_F4,   KC_F5,   KC_F6,  KC_F11, \
-    ______________BOTTOM_ROW_GACS_L______________, KC_PAUS,   KC_F1,   KC_F2,   KC_F3,  KC_F10, \
+        _______________DEAD_HALF_ROW_______________,   KC_PSCR, KC_F7, KC_F8, KC_F9, KC_F12, \
+        _______________DEAD_HALF_ROW_______________,   KC_SCRL, KC_F4, KC_F5, KC_F6, KC_F11, \
+        QK_BOOT, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, KC_PAUS, KC_F1, KC_F2, KC_F3, KC_F10, \
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
-
 /**
  * \brief Media layer.
  *
@@ -111,7 +110,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 /** \brief Mouse emulation and pointer functions. */
 #define LAYOUT_LAYER_POINTER                                                                  \
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
-    _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
+    _______,  XXXXXXX, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN2, KC_BTN3, _______, \
     ______________BOTTOM_ROW_GACS_L______________, ______________BOTTOM_ROW_GACS_R______________, \
                       KC_BTN2, KC_BTN1, KC_BTN3, KC_BTN3, KC_BTN1
 
@@ -137,10 +136,10 @@ static uint16_t auto_pointer_layer_timer = 0;
  * `KC_DOT` is duplicated from the base layer.
  */
 #define LAYOUT_LAYER_NUMERAL                                                                  \
-    KC_LBRC,    KC_7,    KC_8,    KC_9, KC_RBRC, _______________DEAD_HALF_ROW_______________, \
-    KC_SCLN,    KC_4,    KC_5,    KC_6,  KC_EQL, _______________DEAD_HALF_ROW_______________, \
-     KC_GRV,    KC_1,    KC_2,    KC_3, KC_BSLS, ______________BOTTOM_ROW_GACS_R______________, \
-                       KC_DOT,    KC_0, KC_MINS, XXXXXXX, _______
+    KC_ESC,  XXXXXXX, LSFT(KC_9), LSFT(KC_0), LSFT(KC_MINUS),                          KC_MINUS,  KC_7,  KC_8,  KC_9, KC_DOT, \
+    KC_TAB,  LSFT(KC_BSLS),  LSFT(KC_LBRC),  LSFT(KC_RBRC),  LSFT(KC_EQUAL),           KC_EQUAL,  KC_4,  KC_5,  KC_6, KC_ENT, \
+    KC_GRAVE,  LSFT(KC_GRAVE),  KC_LBRC,  KC_RBRC,  KC_BSLS,                           KC_0,  KC_1,  KC_2,  KC_3, KC_PAST, \
+                                    KC_LALT, MO(_CFG), KC_LSFT,      XXXXXXX, XXXXXXX
 
 /**
  * \brief Symbols layer.
@@ -150,10 +149,10 @@ static uint16_t auto_pointer_layer_timer = 0;
  * `KC_RPRN`.
  */
 #define LAYOUT_LAYER_SYMBOLS                                                                  \
-    KC_LCBR, KC_AMPR, KC_ASTR, KC_LPRN, KC_RCBR, _______________DEAD_HALF_ROW_______________, \
-    KC_COLN,  KC_DLR, KC_PERC, KC_CIRC, KC_PLUS, _______________DEAD_HALF_ROW_______________, \
-    KC_TILD, KC_EXLM,   KC_AT, KC_HASH, KC_PIPE, ______________BOTTOM_ROW_GACS_R______________, \
-                      KC_LPRN, _______, KC_UNDS, KC_RPRN, XXXXXXX
+    RSFT(KC_1), RSFT(KC_2),   RSFT(KC_3),  RSFT(KC_4), RSFT(KC_5),                  RSFT(KC_6), RSFT(KC_7), RSFT(KC_8), KC_SCLN, RSFT(KC_SCLN), \
+    KC_ESC, KC_LCTL, RCS_T(KC_ENT), KC_TAB,  KC_LSFT,                                KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_QUOT, \
+    KC_DEL, KC_DEL, KC_DEL, LCA(KC_DELETE), KC_LGUI,                                KC_HOME, KC_END, KC_PGDN, KC_PGUP, RSFT(KC_QUOTE), \
+                                    XXXXXXX, XXXXXXX, KC_TRNS,     KC_RALT, CW_TOGG
 
 /**
  * \brief Add Home Row mod to a layout.
