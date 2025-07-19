@@ -139,7 +139,7 @@ static uint16_t auto_pointer_layer_timer = 0;
     KC_ESC,  XXXXXXX, LSFT(KC_9), LSFT(KC_0), LSFT(KC_MINUS),                          KC_MINUS,  KC_7,  KC_8,  KC_9, KC_DOT, \
     KC_TAB,  LSFT(KC_BSLS),  LSFT(KC_LBRC),  LSFT(KC_RBRC),  LSFT(KC_EQUAL),           KC_EQUAL,  KC_4,  KC_5,  KC_6, KC_ENT, \
     KC_GRAVE,  LSFT(KC_GRAVE),  KC_LBRC,  KC_RBRC,  KC_BSLS,                           KC_0,  KC_1,  KC_2,  KC_3, KC_PAST, \
-                                    KC_LALT, MO(_CFG), KC_LSFT,      XXXXXXX, XXXXXXX
+                                    KC_LALT, MO(LAYER_FUNCTION), KC_LSFT,      XXXXXXX, XXXXXXX
 
 /**
  * \brief Symbols layer.
