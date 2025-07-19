@@ -174,7 +174,7 @@ static uint16_t auto_pointer_layer_timer = 0;
              L10,         L11,         L12,         L13,         L14,  \
              R15,         R16,         R17,         R18,         R19, \
       LGUI_T(L20), LALT_T(L21), LCTL_T(L22), LSFT_T(L23),        L24,  \
-             R26,  RSFT_T(R26), RCTL_T(R27), LALT_T(R28), RGUI_T(R29), \
+             R25,  RSFT_T(R26), RCTL_T(R27), LALT_T(R28), RGUI_T(R29), \
       __VA_ARGS__
 #define BOTTOM_ROW_MOD_GACS(...) _BOTTOM_ROW_MOD_GACS(__VA_ARGS__)
 
