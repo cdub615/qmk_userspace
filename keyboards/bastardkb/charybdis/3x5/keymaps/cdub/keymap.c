@@ -31,7 +31,9 @@ enum charybdis_keymap_layers {
 };
 
 // Automatically enable sniping-mode on the pointer layer.
-#define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
+/* #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER */
+#define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+#define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
 
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
@@ -45,7 +47,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
 #endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
-#define ESC_NAV LT(LAYER_NAVIGATION, KC_ESC)
+#define ESC_PNT LT(LAYER_POINTER, KC_ESC)
 #define TAB_SYM LT(LAYER_SYMBOLS, KC_TAB)
 #define ENT_FUN LT(LAYER_FUNCTION, KC_ENT)
 #define BSP_MED LT(LAYER_MEDIA, KC_BSPC)
@@ -65,7 +67,7 @@ static uint16_t auto_pointer_layer_timer = 0;
        KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT, \
        KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O, \
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
-                      ESC_NAV, TAB_SYM, ENT_FUN, BSP_MED, SPC_NUM
+                      ESC_PNT, TAB_SYM, ENT_FUN, BSP_MED, SPC_NUM
 
 
 /** Convenience row shorthands. */
@@ -152,7 +154,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define LAYOUT_LAYER_SYMBOLS                                                                  \
     RSFT(KC_1), RSFT(KC_2),   RSFT(KC_3),  RSFT(KC_4), RSFT(KC_5),                  RSFT(KC_6), RSFT(KC_7), RSFT(KC_8), KC_SCLN, RSFT(KC_SCLN), \
     KC_ESC, KC_LCTL, RCS_T(KC_ENT), KC_TAB,  KC_LSFT,                                KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_QUOT, \
-    KC_DEL, KC_DEL, KC_DEL, LCA(KC_DELETE), KC_LGUI,                                KC_HOME, KC_END, KC_PGDN, KC_PGUP, RSFT(KC_QUOTE), \
+    KC_DEL, KC_DEL, KC_DEL, LCA(KC_DELETE), KC_LGUI,                                KC_HOME, KC_PGDN, KC_PGUP, KC_END, RSFT(KC_QUOTE), \
                                     XXXXXXX, XXXXXXX, KC_TRNS,     KC_RALT, CW_TOGG
 
 /**
