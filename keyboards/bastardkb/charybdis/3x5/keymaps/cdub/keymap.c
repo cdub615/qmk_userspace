@@ -67,6 +67,7 @@ static uint16_t auto_pointer_layer_timer = 0;
        KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH, \
                       ESC_NAV, TAB_SYM, ENT_FUN, BSP_MED, SPC_NUM
 
+
 /** Convenience row shorthands. */
 #define _______________DEAD_HALF_ROW_______________ XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
 #define ______________BOTTOM_ROW_GACS_L______________ KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, XXXXXXX
@@ -136,9 +137,9 @@ static uint16_t auto_pointer_layer_timer = 0;
  * `KC_DOT` is duplicated from the base layer.
  */
 #define LAYOUT_LAYER_NUMERAL                                                                  \
-    KC_ESC,  XXXXXXX, LSFT(KC_9), LSFT(KC_0), LSFT(KC_MINUS),                          KC_MINUS,  KC_7,  KC_8,  KC_9, KC_DOT, \
+    KC_ESC,  XXXXXXX, LSFT(KC_9), LSFT(KC_0), LSFT(KC_MINUS),                          KC_MINUS,  KC_7,  KC_8,  KC_9, KC_0, \
     KC_TAB,  LSFT(KC_BSLS),  LSFT(KC_LBRC),  LSFT(KC_RBRC),  LSFT(KC_EQUAL),           KC_EQUAL,  KC_4,  KC_5,  KC_6, KC_ENT, \
-    KC_GRAVE,  LSFT(KC_GRAVE),  KC_LBRC,  KC_RBRC,  KC_BSLS,                           KC_0,  KC_1,  KC_2,  KC_3, KC_PAST, \
+    KC_GRAVE,  LSFT(KC_GRAVE),  KC_LBRC,  KC_RBRC,  KC_BSLS,                           XXXXXXX,  KC_1,  KC_2,  KC_3, KC_PAST, \
                                     KC_LALT, MO(LAYER_FUNCTION), KC_LSFT,      XXXXXXX, XXXXXXX
 
 /**
