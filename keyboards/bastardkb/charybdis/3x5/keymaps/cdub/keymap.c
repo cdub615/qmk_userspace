@@ -95,8 +95,8 @@ static uint16_t auto_pointer_layer_timer = 0;
  */
 #define LAYOUT_LAYER_FUNCTION                                                                 \
         _______________DEAD_HALF_ROW_______________,   KC_PSCR, KC_F7, KC_F8, KC_F9, KC_F12, \
-        _______________DEAD_HALF_ROW_______________,   KC_SCRL, KC_F4, KC_F5, KC_F6, KC_F11, \
-        QK_BOOT, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, KC_PAUS, KC_F1, KC_F2, KC_F3, KC_F10, \
+        _______________DEAD_HALF_ROW_______________,   KC_CAPS, KC_F4, KC_F5, KC_F6, KC_F11, \
+        QK_BOOT, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, HYPR(KC_NO), KC_F1, KC_F2, KC_F3, KC_F10, \
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
 /**
  * \brief Media layer.
@@ -107,15 +107,15 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define LAYOUT_LAYER_MEDIA                                                                    \
     XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX, XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX, \
     KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
-    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, XXXXXXX, XXXXXXX, QK_BOOT, \
+    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
                       KC_MSTP, KC_MPLY, KC_MSTP, _______, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */
 #define LAYOUT_LAYER_POINTER                                                                  \
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
     _______,  XXXXXXX, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN2, KC_BTN3, _______, \
-    ______________BOTTOM_ROW_GACS_L______________, ______________BOTTOM_ROW_GACS_R______________, \
-                      _______, XXXXXXX, XXXXXXX, XXXXXXX, DRG_TOG
+    ______________BOTTOM_ROW_GACS_L______________, MS_WHLL, MS_WHLD, MS_WHLU, MS_WHLR, KC_LGUI, \
+                      _______, XXXXXXX, XXXXXXX, MS_WHLD, MS_WHLU
 
 /**
  * \brief Navigation layer.
