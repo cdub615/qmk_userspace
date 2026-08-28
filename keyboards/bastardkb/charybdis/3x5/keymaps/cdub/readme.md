@@ -1,6 +1,39 @@
-# Charybdis (3x5) `via` keymap
+# Charybdis (3x5) `cdub` keymap
 
-The Charydbis (3x5) `via` keymap is based on a QWERTY layout with [home row mods](https://precondition.github.io/home-row-mods) and [Miryoku-inspired layers](https://github.com/manna-harbour/miryoku), and some features and changes specific to the Charybdis.
+A Colemak-DH layout with [Miryoku-inspired layers](https://github.com/manna-harbour/miryoku),
+mods on the bottom row rather than the home row, and some features and changes
+specific to the Charybdis.
+
+## Layout
+
+![Keymap layout](keymap.svg)
+
+Regenerate this diagram after editing `keymap.c`:
+
+```console
+$ make keymap-svg      # from the userspace root
+```
+
+The diagram is drawn from `keymap.yaml`, which is maintained **by hand** — update
+it to match `keymap.c` before regenerating. It needs `uv` (which fetches
+[keymap-drawer](https://github.com/caksoylar/keymap-drawer) on demand) and
+`rsvg-convert` from librsvg.
+
+### Layers
+
+| # | Layer | Reached by |
+| - | ----- | ---------- |
+| 0 | Base | — |
+| 1 | Function | hold left inner thumb (`Enter`); or `MO` on the Numeral layer |
+| 2 | Navigation | **nothing — this layer is currently unreachable** |
+| 3 | Media | hold right thumb 1 (`Bspc`) |
+| 4 | Pointer | hold left thumb 1 (`Esc`), or `V` / `K` |
+| 5 | Numeral | hold right thumb 2 (`Space`) |
+| 6 | Symbols | hold left thumb 2 (`Tab`) |
+
+Mods live on the bottom row (`Z X C D` = Super/Alt/Ctrl/Shift, mirrored right),
+with combined mod-taps on the left top row: `Q` = Shift+Super, `W` = Shift+Alt,
+`F` = Ctrl+Shift.
 
 This layout supports RGB matrix. However, due to space constraints on the MCU, only a limited number of effect can be enabled at once. Look at the `config.h` file and enable your favorite effect.
 
@@ -57,7 +90,3 @@ The trigger sensibility can also be tuned. The lower the value, the more sensibl
 ```c
 #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
 ```
-
-## Layout
-
-![Keymap layout (generated with keyboard-layout-editor.com)](https://i.imgur.com/uHEnqEN.png)
