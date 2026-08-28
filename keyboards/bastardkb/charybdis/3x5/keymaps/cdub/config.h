@@ -18,7 +18,7 @@
 
 #ifdef VIA_ENABLE
 /* VIA configuration. */
-#    define DYNAMIC_KEYMAP_LAYER_COUNT 7
+#    define DYNAMIC_KEYMAP_LAYER_COUNT 6
 #endif // VIA_ENABLE
 
 #ifndef __arm__
@@ -54,3 +54,18 @@
 #    undef RGBLIGHT_LED_COUNT
 #endif
 #define RGBLIGHT_LED_COUNT 36
+
+/* Auto mouse layer.
+ *
+ * QMK defaults AUTO_MOUSE_DEFAULT_LAYER to 1, which here is LAYER_FUNCTION --
+ * so trackball motion would raise the wrong layer, and bk_pointing_device ties
+ * auto-sniping to this same layer. Point it at LAYER_POINTER.
+ *
+ * NOTE: this is a raw index and cannot reference the enum in keymap.c. If the
+ * layer order changes, update it here too. Currently:
+ *   0 BASE  1 FUNCTION  2 MEDIA  3 POINTER  4 NUMERAL  5 SYMBOLS
+ */
+#ifdef AUTO_MOUSE_DEFAULT_LAYER
+#    undef AUTO_MOUSE_DEFAULT_LAYER
+#endif
+#define AUTO_MOUSE_DEFAULT_LAYER 3

@@ -28,7 +28,6 @@
 enum charybdis_keymap_layers {
     LAYER_BASE = 0,
     LAYER_FUNCTION,
-    LAYER_NAVIGATION,
     LAYER_MEDIA,
     LAYER_POINTER,
     LAYER_NUMERAL,
@@ -96,7 +95,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define LAYOUT_LAYER_FUNCTION                                                                 \
         _______________DEAD_HALF_ROW_______________,   KC_PSCR, KC_F7, KC_F8, KC_F9, KC_F12, \
         _______________DEAD_HALF_ROW_______________,   KC_CAPS, KC_F4, KC_F5, KC_F6, KC_F11, \
-        QK_BOOT, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, HYPR(KC_NO), KC_F1, KC_F2, KC_F3, KC_F10, \
+        XXXXXXX, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, HYPR(KC_NO), KC_F1, KC_F2, KC_F3, KC_F10, \
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
 /**
  * \brief Media layer.
@@ -107,29 +106,16 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define LAYOUT_LAYER_MEDIA                                                                    \
     XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
     KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
-    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
+    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, XXXXXXX, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
                       KC_MSTP, KC_MPLY, KC_MSTP, _______, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */
 #define LAYOUT_LAYER_POINTER                                                                  \
-    QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
+    XXXXXXX,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, XXXXXXX, \
     _______,  XXXXXXX, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, MS_BTN1, MS_BTN2, MS_BTN3, _______, \
     ______________BOTTOM_ROW_GACS_L______________, MS_WHLL, MS_WHLD, MS_WHLU, MS_WHLR, KC_LGUI, \
                       _______, XXXXXXX, XXXXXXX, MS_WHLD, MS_WHLU
 
-/**
- * \brief Navigation layer.
- *
- * Primary right-hand layer (left home thumb) is navigation and editing. Cursor
- * keys are on the home position, line and page movement below, clipboard above,
- * caps lock and insert on the inner column. Thumb keys are duplicated from the
- * base layer to avoid having to layer change mid edit and to enable auto-repeat.
- */
-#define LAYOUT_LAYER_NAVIGATION                                                               \
-    _______________DEAD_HALF_ROW_______________, _______________DEAD_HALF_ROW_______________, \
-    _______________DEAD_HALF_ROW_______________, KC_CAPS, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
-    ______________BOTTOM_ROW_GACS_L______________,  KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END, \
-                      _______, XXXXXXX, XXXXXXX,  KC_ENT, KC_BSPC
 
 /**
  * \brief Numeral layout.
@@ -140,7 +126,7 @@ static uint16_t auto_pointer_layer_timer = 0;
  */
 #define LAYOUT_LAYER_NUMERAL                                                                  \
     KC_ESC,  XXXXXXX, LSFT(KC_9), LSFT(KC_0), LSFT(KC_MINUS),                          KC_MINUS,  KC_7,  KC_8,  KC_9, KC_0, \
-    KC_TAB,  LSFT(KC_BSLS),  LSFT(KC_LBRC),  LSFT(KC_RBRC),  LSFT(KC_EQUAL),           KC_EQUAL,  KC_4,  KC_5,  KC_6, KC_ENT, \
+    KC_TAB,  LSFT(KC_BSLS),  LSFT(KC_LBRC),  LSFT(KC_RBRC),  KC_EQUAL,           LSFT(KC_EQUAL),  KC_4,  KC_5,  KC_6, KC_ENT, \
     KC_GRAVE,  LSFT(KC_GRAVE),  KC_LBRC,  KC_RBRC,  KC_BSLS,                           XXXXXXX,  KC_1,  KC_2,  KC_3, KC_PAST, \
                                     KC_LALT, MO(LAYER_FUNCTION), KC_LSFT,      XXXXXXX, XXXXXXX
 
@@ -207,12 +193,35 @@ static uint16_t auto_pointer_layer_timer = 0;
 
 #define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
+/**
+ * \brief Force the auto mouse layer off.
+ *
+ * Raising the pointer layer whenever the trackball moves proved more
+ * disruptive than useful. The module reads this setting from EEPROM in
+ * keyboard_post_init_bk_pointing_device(), which quantum/keyboard.c runs
+ * *before* keyboard_post_init_user(), so turning it off here reliably wins
+ * regardless of what a previous firmware persisted.
+ *
+ * Guarded so it only writes EEPROM when it actually needs to change --
+ * bkpd_set_auto_mouse_layer_enabled() calls write_bkpd_config_to_eeprom().
+ *
+ * Note this does not affect auto precision-mode, which the module gates on a
+ * separate flag (auto_precision_on_mouse_layer_enabled).
+ */
+bool bkpd_get_auto_mouse_layer_enabled(void);
+void bkpd_set_auto_mouse_layer_enabled(bool enabled);
+
+void keyboard_post_init_user(void) {
+    if (bkpd_get_auto_mouse_layer_enabled()) {
+        bkpd_set_auto_mouse_layer_enabled(false);
+    }
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_BASE] = LAYOUT_wrapper(
     POINTER_MOD(BOTTOM_ROW_MOD_GACS(LAYOUT_LAYER_BASE))
   ),
   [LAYER_FUNCTION] = LAYOUT_wrapper(LAYOUT_LAYER_FUNCTION),
-  [LAYER_NAVIGATION] = LAYOUT_wrapper(LAYOUT_LAYER_NAVIGATION),
   [LAYER_MEDIA] = LAYOUT_wrapper(LAYOUT_LAYER_MEDIA),
   [LAYER_NUMERAL] = LAYOUT_wrapper(LAYOUT_LAYER_NUMERAL),
   [LAYER_POINTER] = LAYOUT_wrapper(LAYOUT_LAYER_POINTER),
