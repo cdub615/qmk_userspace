@@ -26,19 +26,31 @@
 #    define NO_ACTION_ONESHOT
 #endif // __arm__
 
-/* Charybdis-specific features. */
-#define CHARYBDIS_CONFIG_SYNC
-
-#ifdef POINTING_DEVICE_ENABLE
-    #define CHARYBDIS_DRAGSCROLL_ENABLE
-    #define CHARYBDIS_SNIPING_ENABLE
-// Automatically enable the pointer layer when moving the trackball.  See also:
-    /* #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000 */
-    /* #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 2 */
-    /* #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE */
-#endif // POINTING_DEVICE_ENABLE
+/* Charybdis-specific features.
+ *
+ * The old CHARYBDIS_* API is gone: charybdis.h/.c no longer define
+ * DRGSCRL/SNIPING/DPI_MOD, and drag-scroll + precision mode now come from the
+ * bastardkb/bk_pointing_device community module (enabled in keymap.json).
+ *
+ * CHARYBDIS_CONFIG_SYNC must NOT be set -- it makes the keyboard's
+ * post_config.h claim SPLIT_TRANSACTION_IDS_KB, which collides with the one
+ * the argos module defines. Split config syncing is handled by the module now.
+ */
 
 /* #define PERMISSIVE_HOLD */
 #define TAPPING_TERM 180
 #define TAPPING_TERM_PER_KEY
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+
+/* Required by the bastardkb/bk_pointing_device module (see upstream vendor
+ * keymap config.h). LED_DPI_INDICATOR_INDEX drives the DPI indicator LED;
+ * RGBLIGHT_LED_COUNT is used for its symmetric-index maths. */
+#ifdef LED_DPI_INDICATOR_INDEX
+#    undef LED_DPI_INDICATOR_INDEX
+#endif
+#define LED_DPI_INDICATOR_INDEX 0
+
+#ifdef RGBLIGHT_LED_COUNT
+#    undef RGBLIGHT_LED_COUNT
+#endif
+#define RGBLIGHT_LED_COUNT 36

@@ -11,7 +11,8 @@ endif
 DOC_GOALS := keymap-svg
 
 ifeq ($(filter $(DOC_GOALS),$(MAKECMDGOALS)),)
-QMK_FIRMWARE_ROOT = $(shell qmk config -ro user.qmk_home | cut -d= -f2 | sed -e 's@^None$$@@g')
+# qmk 1.2.0 appends a " (config)" source annotation to -ro output; strip it.
+QMK_FIRMWARE_ROOT = $(shell qmk config -ro user.qmk_home | cut -d= -f2- | sed -e 's/ .*$$//' -e 's@^None$$@@g')
 ifeq ($(QMK_FIRMWARE_ROOT),)
     $(error Cannot determine qmk_firmware location. `qmk config -ro user.qmk_home` is not set)
 endif

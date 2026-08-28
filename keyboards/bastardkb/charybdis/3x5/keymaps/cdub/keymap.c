@@ -105,7 +105,7 @@ static uint16_t auto_pointer_layer_timer = 0;
  * symmetrical to accomodate the left- and right-hand trackball.
  */
 #define LAYOUT_LAYER_MEDIA                                                                    \
-    XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX, XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX, \
+    XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
     KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
     XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT, QK_BOOT,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
                       KC_MSTP, KC_MPLY, KC_MSTP, _______, KC_MPLY
@@ -113,7 +113,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 /** \brief Mouse emulation and pointer functions. */
 #define LAYOUT_LAYER_POINTER                                                                  \
     QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
-    _______,  XXXXXXX, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN2, KC_BTN3, _______, \
+    _______,  XXXXXXX, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, MS_BTN1, MS_BTN2, MS_BTN3, _______, \
     ______________BOTTOM_ROW_GACS_L______________, MS_WHLL, MS_WHLD, MS_WHLU, MS_WHLR, KC_LGUI, \
                       _______, XXXXXXX, XXXXXXX, MS_WHLD, MS_WHLU
 
