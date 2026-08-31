@@ -83,6 +83,19 @@ fetch() {
     return 0
 }
 
+# After a successful write the board reboots and its RPI-RP2 drive disappears.
+# Wait for that before looking for the next one, so we can't re-detect the half
+# we just finished.
+wait_for_drive_gone() {
+    local deadline=$((SECONDS + 30))
+    while (( SECONDS < deadline )); do
+        findmnt -no TARGET -S LABEL=$DRIVE_LABEL >/dev/null 2>&1 || return 0
+        sleep 1
+    done
+    warn "the previous drive is still mounted; continuing anyway"
+    return 0
+}
+
 wait_for_drive() {
     local half=$1 deadline=$((SECONDS + WAIT_TIMEOUT)) mnt=""
     info ""
@@ -163,8 +176,8 @@ main() {
         flash_one "FIRST"
         info ""
         info "${YEL}Now the other half.${OFF} Move the USB cable over."
-        info "${DIM}(leave the TRRS cable connected throughout)${OFF}"
-        read -rp "Press Enter when ready... " _
+        info "${DIM}(leave the TRRS cable connected; nothing to press here)${OFF}"
+        wait_for_drive_gone
         flash_one "SECOND"
         info ""
         ok "both halves done -- leave USB on the right half"
