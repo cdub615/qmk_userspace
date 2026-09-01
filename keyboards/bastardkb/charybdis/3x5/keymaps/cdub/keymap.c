@@ -273,7 +273,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             command = KC_D;
             break;
         default:
-            return true;
+            return true;  // pass-through only -- custom keycodes MUST return false
     }
 
     if (record->event.pressed) {

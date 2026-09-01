@@ -471,11 +471,29 @@ Note that `~/.tmux.conf` is stale and not loaded; the live config is
   short-circuit the second dispatch.
 ```
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Repoint the `process_record_user()` comment at the readme**
+
+The doc comment above `process_record_user()` in `keymap.c` currently cites
+this plan document. Plan docs are per-epic and get archived once the epic
+closes; the readme is the durable home. Now that Step 3 has put the constraint
+there, change the comment's reference from
+
+```
+ * docs/superpowers/plans/2026-09-01-tmux-control-hand.md.
+```
+
+to
+
+```
+ * the "Constraints worth knowing" section of this keymap's readme.md.
+```
+
+- [ ] **Step 5: Commit**
 
 ```bash
 cd /home/cdub/projects/qmk_userspace
-git add keyboards/bastardkb/charybdis/3x5/keymaps/cdub/readme.md
+git add keyboards/bastardkb/charybdis/3x5/keymaps/cdub/readme.md \
+        keyboards/bastardkb/charybdis/3x5/keymaps/cdub/keymap.c
 git commit -m "docs: describe the tmux hand and the argos constraints
 
 Refs qmk-qm8.4"
@@ -540,8 +558,26 @@ Watch for a **double fire**: if `B` opens two windows, or `D` zooms and instantl
 unzooms, the single-dispatch invariant is broken. Re-check that every branch of
 `process_record_user()` returns `false` (Task 1, Step 5).
 
-If instead a macro fires inconsistently -- the prefix lands but the letter is
-dropped -- raise `TAP_CODE_DELAY` in `config.h` from `10` to `20` and reflash.
+If instead a macro fires inconsistently, the fix depends on which half fails,
+and the two have different causes:
+
+- **The whole macro is intermittent** (sometimes nothing happens at all): the
+  host is dropping a too-short keypress. Raise `TAP_CODE_DELAY` in `config.h`
+  from `10` to `20` and reflash. `TAP_CODE_DELAY` is the duration each tap is
+  *held* -- `tap_code16_delay()` is `register_code16` / `wait_ms(delay)` /
+  `unregister_code16` (`quantum/quantum.c:154-158`).
+- **The prefix lands but the letter is dropped**: this is the *boundary*
+  between the two taps, which is still zero and which `TAP_CODE_DELAY` does
+  not affect. Raising it will not help. Add an explicit gap in `keymap.c`
+  instead:
+
+  ```c
+  if (record->event.pressed) {
+      tap_code16(TMX_PFX);
+      wait_ms(10);
+      tap_code16(command);
+  }
+  ```
 
 - [ ] **Step 5: Verify the raw prefix**
 
