@@ -529,28 +529,40 @@ bd close qmk-qm8.4
 **Beads:** `qmk-qm8.5` (blocked by `qmk-qm8.2`)
 
 `make flash-both` fetches the **CI-built** firmware from the GitHub release, not
-the local build. Push first and wait for CI, or the flash will write the old
-firmware.
+the local build. This run flashes the local build instead, so the branch does
+not have to be pushed first and the `latest` release is left alone.
 
-- [ ] **Step 1: Push and wait for CI**
+`util/flash.sh --cached` skips the download and flashes whatever sits at
+`${XDG_DATA_HOME:-$HOME/.local/share}/qmk-builds/charybdis_cdub_latest.uf2`,
+and still verifies it as a valid RP2040 UF2 first (`util/flash.sh:169`).
+
+- [ ] **Step 1: Stage the local build into the flash cache**
 
 ```bash
 cd /home/cdub/projects/qmk_userspace
-git push
-gh run watch
+make bastardkb/charybdis/3x5/splinktegrated_rev1:cdub
+CACHE="${XDG_DATA_HOME:-$HOME/.local/share}/qmk-builds"
+cp "$CACHE/charybdis_cdub_latest.uf2" "$CACHE/charybdis_cdub_ci-backup.uf2"   # keep the CI build
+cp bastardkb_charybdis_3x5_splinktegrated_rev1_cdub.uf2 "$CACHE/charybdis_cdub_latest.uf2"
 ```
 
-Expected: the workflow completes successfully and publishes a release asset.
+Expected: the build reaches `[OK]`, and the staged file is byte-identical to
+the freshly built `.uf2`.
 
-- [ ] **Step 2: Flash both halves**
+- [ ] **Step 2: Flash both halves from the cache**
 
 ```bash
 cd /home/cdub/projects/qmk_userspace
-make flash-both
+util/flash.sh --cached --both
 ```
 
 Expected: the UF2 verifies, and each half's bootloader drive is detected and
-written in turn without needing a keypress between them.
+written in turn without needing a keypress between them. Put each half into
+bootloader mode when prompted: unplug USB, hold the top-outer key, plug back
+in, release.
+
+To go back to CI firmware later, either run `make flash-both` (which re-fetches
+and overwrites the cache) or restore `charybdis_cdub_ci-backup.uf2`.
 
 - [ ] **Step 3: Verify the twelve plain keycodes**
 
