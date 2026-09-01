@@ -463,20 +463,34 @@ Note that `~/.tmux.conf` is stale and not loaded; the live config is
   versions, and drives both from EEPROM via the Argos configurator (16 combo
   slots, 4 keys each). Combos written in `keymap.c` are silently ignored.
   Escaping this means forking the `modules/bastardkb` submodule.
-- **`TAPPING_TERM_PER_KEY` has no effect.** argos defines `get_tapping_term()`
-  non-weak, so the tapping term is one global value.
+- **The tapping term lives in EEPROM, not `config.h`.** argos defines
+  `get_tapping_term()` non-weak (`argos.c:520`) and returns one global value
+  read from EEPROM, so per-key tapping terms are impossible. `TAPPING_TERM`
+  seeds EEPROM only on first-ever boot (`argos.c:80`). Leave
+  `TAPPING_TERM_PER_KEY` defined -- QMK only compiles `get_tapping_term()`
+  when it is set (`action_tapping.c:34`), so removing it disables argos's
+  override rather than tidying anything up.
+
+  (An earlier draft of this plan said `TAPPING_TERM_PER_KEY` "has no effect".
+  That was wrong and invited deleting a load-bearing define.)
 - **`process_record_user()` is reachable twice per key event.**
   `bk_pointing_device.c` calls it from inside its own module hook, in addition
   to the normal `process_record_kb()` path. Handlers must return `false` to
   short-circuit the second dispatch.
-- **The Symbols layer's `LCA(KC_DELETE)` is deliberate.** Hold `Tab`, press
-  `D`, and you send `Ctrl+Alt+Delete`, which Hyprland binds to *close all
-  windows* (`hyprctl binds` shows `modmask=12 key=DELETE`). This is the only
-  non-`SUPER` Hyprland binding that collides with anything this keymap emits.
-  It is kept on purpose -- do not "fix" it.
-- **The tmux hand is inert in copy-mode.** While a pane is in copy-mode the
-  `copy-mode-vi` key table takes precedence over `bind -n`, so every key on
-  the tmux hand except `tmux pfx` does nothing there.
+- **The Symbols layer's `LCA(KC_DELETE)` is deliberate -- it is a feature.**
+  Hold `Tab`, press `D`, and you send `Ctrl+Alt+Delete`, which Hyprland binds
+  to *close all windows* (`hyprctl binds` shows `modmask=12 key=DELETE`). That
+  shortcut is wanted from the keyboard. Do not "fix" it.
+- **None of the tmux hand's chords collide with Hyprland.** Checked against
+  every non-`SUPER` binding. Note this is narrower than "the keymap never
+  collides" -- Hyprland does bind `Alt+Tab` and `Ctrl+Alt+Tab`, both reachable
+  from the base layer.
+- **The tmux hand still works in copy-mode.** `copy-mode-vi` only shadows keys
+  it binds itself, and none of the hand's chords are in it. On a miss tmux
+  falls back to the root table, so `bind -n` still fires.
+
+  (An earlier draft of this plan claimed the opposite -- that the hand was
+  inert in copy-mode. Verified false against tmux 3.7c.)
 ```
 
 - [ ] **Step 4: Repoint the `process_record_user()` comment at the readme**

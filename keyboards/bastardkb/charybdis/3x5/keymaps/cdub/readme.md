@@ -25,11 +25,14 @@ it to match `keymap.c` before regenerating. It needs `uv` (which fetches
 | - | ----- | ---------- |
 | 0 | Base | — |
 | 1 | Function | hold left inner thumb (`Enter`); or `MO` on the Numeral layer |
-| 2 | Navigation | **nothing — this layer is currently unreachable** |
-| 3 | Media | hold right thumb 1 (`Bspc`) |
-| 4 | Pointer | hold left thumb 1 (`Esc`), or `V` / `K` |
-| 5 | Numeral | hold right thumb 2 (`Space`) |
-| 6 | Symbols | hold left thumb 2 (`Tab`) |
+| 2 | Media | hold right thumb 1 (`Bspc`) — left hand is the tmux control hand |
+| 3 | Pointer | hold left thumb 1 (`Esc`), or `V` / `K` |
+| 4 | Numeral | hold right thumb 2 (`Space`) |
+| 5 | Symbols | hold left thumb 2 (`Tab`) |
+
+These indices are load-bearing: `config.h` hardcodes
+`AUTO_MOUSE_DEFAULT_LAYER 3` to mean Pointer, and cannot reference the enum in
+`keymap.c`. Reorder the layers and you must update it by hand.
 
 Mods live on the bottom row (`Z X C D` = Super/Alt/Ctrl/Shift, mirrored right),
 with combined mod-taps on the left top row: `Q` = Shift+Super, `W` = Shift+Alt,
@@ -99,15 +102,22 @@ window and session movement are on the top row; the structural commands are on
 the bottom row, furthest from an accidental press.
 
 Most of these are plain mod-wrapped keycodes, not macros, because the live tmux
-config binds them prefix-free (`bind -n`) to Alt and Ctrl+Alt chords. Only new
-window, zoom and detach need the prefix, and those are the three custom
-keycodes in `process_record_user()`.
+config binds them prefix-free (`bind -n`) to Alt, Alt+Shift and Ctrl+Alt
+chords. Only new window, zoom and detach need the prefix, and those are the
+three custom keycodes in `process_record_user()`.
 
-`tmux pfx` (home row, index finger) emits `C-b` -- tmux's `prefix2` -- and
-covers everything without its own key: `s`, `[`, `w`, `k`, `r`.
+`tmux pfx` (home row, `G` position — the inner index stretch, not `T`) emits
+`C-b` — tmux's `prefix2` — and covers everything without its own key: `s`,
+`[`, `w`, `k`, `r`.
 
 Note that `~/.tmux.conf` is stale and not loaded; the live config is
 `~/.config/tmux/tmux.conf`.
+
+Split-right is the one fragile key. It sends `M-S-Enter`, which only survives
+the trip to tmux because `~/.config/ghostty/config` hand-sets
+`keybind = alt+shift+enter=csi:13;4u`. In legacy encoding `Alt+Shift+Enter` is
+indistinguishable from `Alt+Enter`, so without that line split-right silently
+becomes a second split-below. If the terminal ever changes, check this first.
 
 ## Constraints worth knowing
 
@@ -115,19 +125,36 @@ Note that `~/.tmux.conf` is stale and not loaded; the live config is
   (`modules/bastardkb/argos/`) defines `combo_count()`/`combo_get()` and
   `tap_dance_count()`/`tap_dance_get()` non-weak, overriding QMK's weak
   versions, and drives both from EEPROM via the Argos configurator (16 combo
-  slots, 4 keys each). Combos written in `keymap.c` are silently ignored.
-  Escaping this means forking the `modules/bastardkb` submodule.
-- **`TAPPING_TERM_PER_KEY` has no effect.** argos defines `get_tapping_term()`
-  non-weak, so the tapping term is one global value.
+  slots of 4 keys each; 50 tap-dance slots). Combos written in `keymap.c` are
+  silently ignored. Escaping this means forking the `modules/bastardkb`
+  submodule.
+- **The tapping term lives in EEPROM, not `config.h`.** argos defines
+  `get_tapping_term()` non-weak (`argos.c:520`) and returns one global value
+  read from EEPROM, so per-key tapping terms are impossible — defining
+  `get_tapping_term()` in `keymap.c` is a duplicate-symbol link error, not a
+  silent no-op. `#define TAPPING_TERM 180` seeds EEPROM only on a board's
+  first-ever boot (`argos.c:80`); after that, change it in the Argos
+  configurator or clear EEPROM. Leave `TAPPING_TERM_PER_KEY` defined — QMK
+  only compiles `get_tapping_term()` at all when it is set
+  (`action_tapping.c:34`), so removing it would disable argos's override
+  rather than tidy anything up.
 - **`process_record_user()` is reachable twice per key event.**
   `bk_pointing_device.c` calls it from inside its own module hook, in addition
   to the normal `process_record_kb()` path. Handlers must return `false` to
   short-circuit the second dispatch, or every macro fires twice.
-- **The Symbols layer's `LCA(KC_DELETE)` is deliberate.** Hold `Tab`, press
-  `D`, and you send `Ctrl+Alt+Delete`, which Hyprland binds to *close all
-  windows* (`hyprctl binds` shows `modmask=12 key=DELETE`). This is the only
-  non-`SUPER` Hyprland binding that collides with anything this keymap emits.
-  It is kept on purpose -- do not "fix" it.
-- **The tmux hand is inert in copy-mode.** While a pane is in copy-mode the
-  `copy-mode-vi` key table takes precedence over `bind -n`, so every key on
-  the tmux hand except `tmux pfx` does nothing there.
+- **The Symbols layer's `LCA(KC_DELETE)` is deliberate — it is a feature, not
+  a stray keycode.** Hold `Tab`, press `D`, and you send `Ctrl+Alt+Delete`,
+  which Hyprland binds to *close all windows* (`hyprctl binds` shows
+  `modmask=12 key=DELETE`). That shortcut is wanted from the keyboard, which
+  is the whole reason the key is there. Do not "fix" it.
+- **None of the tmux hand's chords collide with Hyprland.** Checked against
+  every non-`SUPER` binding: `M-arrows`, `C-M-arrows`, `M-Enter`,
+  `M-S-Enter`, `M-Escape` and `C-b` are all free. This is narrower than "the
+  keymap never collides" — Hyprland does bind `Alt+Tab` and `Ctrl+Alt+Tab`,
+  both reachable from the base layer's `Tab` and bottom-row mods.
+- **The tmux hand still works in copy-mode.** `copy-mode-vi` only shadows keys
+  it binds itself, and none of the hand's chords are in it — it binds
+  `C-Up`/`C-Down`, not `C-M-Up`/`C-M-Down`, and plain `Escape`, not
+  `M-Escape`. On a miss tmux falls back to the root table, so `bind -n` still
+  fires. Even `tmux pfx` works despite `copy-mode-vi` binding `C-b` to
+  page-up, because the prefix check runs first.
