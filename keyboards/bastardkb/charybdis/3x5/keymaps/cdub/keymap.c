@@ -77,8 +77,11 @@ static uint16_t auto_pointer_layer_timer = 0;
 
 /* The three commands that genuinely need the tmux prefix.
  *
- * QK_USER is the correct base with VIA enabled; the keyboard-level QK_KB range
- * is claimed by VIA and by the argos module. */
+ * QK_USER (0x7E40) is the correct base with VIA enabled. Do not use the
+ * keyboard-level QK_KB range: VIA uses it, and bk_pointing_device already
+ * occupies 0x7E00-0x7E07 (DPI_MOD through DRG_TOG, see that module's
+ * introspection.h). argos claims no keycodes -- it works through the combo,
+ * tap-dance and tapping-term overrides instead. */
 enum tmux_keycodes {
     TMX_NEW = QK_USER,  // prefix c -- new window
     TMX_ZOOM,           // prefix z -- toggle pane zoom
@@ -263,11 +266,10 @@ void keyboard_post_init_user(void) {
  * \brief Send a tmux prefix followed by a command letter.
  *
  * Every branch returns false, and that is load-bearing -- see the
- * single-dispatch invariant in
- * the "Constraints worth knowing" section of this keymap's readme.md. Returning true here
- * would fire each macro twice, because bk_pointing_device.c calls
- * process_record_user() itself in addition to the normal process_record_kb()
- * path.
+ * single-dispatch invariant under "Constraints worth knowing" in this
+ * keymap's readme.md. Returning true here would fire each macro twice,
+ * because bk_pointing_device.c calls process_record_user() itself in
+ * addition to the normal process_record_kb() path.
  */
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint16_t command = KC_NO;

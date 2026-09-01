@@ -636,12 +636,24 @@ bd close qmk-qm8
 
 ## Rollback
 
-Every task is a single commit. To back out the whole feature:
+The branch carries more than one commit per task -- review passes added
+correction commits that edit files the task commits created, so reverting the
+four task SHAs alone would conflict. Back out the whole range instead:
 
 ```bash
 cd /home/cdub/projects/qmk_userspace
-git revert --no-commit <task-4-sha> <task-3-sha> <task-2-sha> <task-1-sha>
+git revert --no-commit ffc771d..HEAD      # or, if unpushed: git reset --hard ffc771d
 git commit -m "Revert the tmux control hand"
 ```
 
-Then push and reflash, since `make flash-both` pulls from CI.
+Then restore the previous firmware and reflash:
+
+```bash
+CACHE="${XDG_DATA_HOME:-$HOME/.local/share}/qmk-builds"
+cp "$CACHE/charybdis_cdub_ci-backup.uf2" "$CACHE/charybdis_cdub_latest.uf2"
+util/flash.sh --cached --both
+```
+
+Note the VIA caveat below: reflashing on the same calendar day as the previous
+flash leaves the EEPROM keymap in place, so press `EE_CLR` (Media, right index)
+if a reflash appears not to have taken.

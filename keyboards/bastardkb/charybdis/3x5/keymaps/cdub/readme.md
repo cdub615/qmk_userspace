@@ -138,6 +138,14 @@ becomes a second split-below. If the terminal ever changes, check this first.
   only compiles `get_tapping_term()` at all when it is set
   (`action_tapping.c:34`), so removing it would disable argos's override
   rather than tidy anything up.
+- **A same-day reflash will not change the keymap.** With VIA and dynamic
+  keymaps enabled, the live keymap is read from EEPROM and refreshed from
+  flash only when `via_eeprom_is_valid()` fails (`quantum/via.c:70-118`) —
+  and that check is derived from the *date* part of `QMK_BUILDDATE` alone. So
+  flashing twice on the same calendar day keeps the old EEPROM keymap, and a
+  layout change appears not to have taken. Press `EE_CLR` (Media, right index)
+  rather than debugging the keymap. A first flash on a new day resets dynamic
+  keymaps and VIA macros as a side effect; that is normal.
 - **`process_record_user()` is reachable twice per key event.**
   `bk_pointing_device.c` calls it from inside its own module hook, in addition
   to the normal `process_record_kb()` path. Handlers must return `false` to

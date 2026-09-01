@@ -119,8 +119,11 @@ the same form as the existing `LCA(KC_DELETE)` on the Symbols layer.
   `SEND_STRING(SS_LCTL("b") "z")`.
 
 The custom keycode enum must start at a base that does not collide with VIA or
-with the argos module's own keycode range; `QK_USER` is the intended base and
-the actual value must be confirmed against a clean build.
+with the `bk_pointing_device` module's keycode range (`0x7E00`-`0x7E07`:
+`DPI_MOD` through `DRG_TOG`, in that module's `introspection.h`). `QK_USER`
+(`0x7E40`) is the intended base and the actual value must be confirmed against
+a clean build. Note argos claims no keycodes at all -- it works through the
+combo, tap-dance and tapping-term overrides instead.
 
 ### Keys removed
 
@@ -156,8 +159,14 @@ Explicitly out of scope:
   `quantum/keymap_introspection.c` are `__attribute__((weak))`, so argos wins at
   link time and reads 16 combo slots (4 keys each) from EEPROM instead. Escaping
   this would mean forking the `modules/bastardkb` submodule.
-- `TAPPING_TERM` is a single global value. argos defines `get_tapping_term()`
-  non-weak, so `TAPPING_TERM_PER_KEY` has no effect.
+- The tapping term is a single global value read from EEPROM. argos defines
+  `get_tapping_term()` non-weak (`argos.c:520`), so per-key tapping terms are
+  impossible, and `TAPPING_TERM` seeds EEPROM only on a board's first-ever boot
+  (`argos.c:80`). **Leave `TAPPING_TERM_PER_KEY` defined** -- QMK only compiles
+  `get_tapping_term()` when it is set (`action_tapping.c:34`), so removing it
+  would disable argos's override rather than tidy anything up. (An earlier
+  draft of this spec said the define "has no effect", which invited exactly
+  that deletion.)
 - `AUTO_MOUSE_DEFAULT_LAYER` in `config.h` is the hardcoded index `3`. This
   design does not reorder layers, so it needs no change.
 - Auto mouse layer stays disabled in `keyboard_post_init_user()`.
