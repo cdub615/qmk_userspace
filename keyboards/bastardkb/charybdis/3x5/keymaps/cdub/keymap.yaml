@@ -35,11 +35,11 @@ layers:
 
     # ---------------------------------------------------------------- layer 2
     Media:
-        - ['', RGB Prev, RGB Tog, RGB Next, '',
+        - ['Win ←', 'Win →', 'Ses ↑', 'Ses ↓', New win,
            '', RGB Prev, RGB Tog, RGB Next, '']
-        - [Prev, 'Vol −', Mute, 'Vol +', Next,
+        - ['Pane ←', 'Pane ↓', 'Pane ↑', 'Pane →', tmux pfx,
            Prev, 'Vol −', Mute, 'Vol +', Next]
-        - ['', '', '', EE Clear, '',
+        - ['Split ↓', 'Split →', Kill pane, Zoom, Detach,
            '', EE Clear, Pause, '', Boot]
         - [Stop, Play/Pause, Stop,
            { type: held }, Play/Pause]
