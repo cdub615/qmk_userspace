@@ -90,3 +90,44 @@ The trigger sensibility can also be tuned. The lower the value, the more sensibl
 ```c
 #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
 ```
+
+## The tmux hand (Media layer, left side)
+
+Hold `Bspc` with the right thumb and the left hand becomes tmux control.
+Pane selection sits on the home row because it is the most frequent action;
+window and session movement are on the top row; the structural commands are on
+the bottom row, furthest from an accidental press.
+
+Most of these are plain mod-wrapped keycodes, not macros, because the live tmux
+config binds them prefix-free (`bind -n`) to Alt and Ctrl+Alt chords. Only new
+window, zoom and detach need the prefix, and those are the three custom
+keycodes in `process_record_user()`.
+
+`tmux pfx` (home row, index finger) emits `C-b` -- tmux's `prefix2` -- and
+covers everything without its own key: `s`, `[`, `w`, `k`, `r`.
+
+Note that `~/.tmux.conf` is stale and not loaded; the live config is
+`~/.config/tmux/tmux.conf`.
+
+## Constraints worth knowing
+
+- **Combos and tap dance cannot be defined here.** The argos module
+  (`modules/bastardkb/argos/`) defines `combo_count()`/`combo_get()` and
+  `tap_dance_count()`/`tap_dance_get()` non-weak, overriding QMK's weak
+  versions, and drives both from EEPROM via the Argos configurator (16 combo
+  slots, 4 keys each). Combos written in `keymap.c` are silently ignored.
+  Escaping this means forking the `modules/bastardkb` submodule.
+- **`TAPPING_TERM_PER_KEY` has no effect.** argos defines `get_tapping_term()`
+  non-weak, so the tapping term is one global value.
+- **`process_record_user()` is reachable twice per key event.**
+  `bk_pointing_device.c` calls it from inside its own module hook, in addition
+  to the normal `process_record_kb()` path. Handlers must return `false` to
+  short-circuit the second dispatch, or every macro fires twice.
+- **The Symbols layer's `LCA(KC_DELETE)` is deliberate.** Hold `Tab`, press
+  `D`, and you send `Ctrl+Alt+Delete`, which Hyprland binds to *close all
+  windows* (`hyprctl binds` shows `modmask=12 key=DELETE`). This is the only
+  non-`SUPER` Hyprland binding that collides with anything this keymap emits.
+  It is kept on purpose -- do not "fix" it.
+- **The tmux hand is inert in copy-mode.** While a pane is in copy-mode the
+  `copy-mode-vi` key table takes precedence over `bind -n`, so every key on
+  the tmux hand except `tmux pfx` does nothing there.

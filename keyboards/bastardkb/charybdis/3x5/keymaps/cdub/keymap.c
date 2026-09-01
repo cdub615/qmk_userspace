@@ -264,7 +264,7 @@ void keyboard_post_init_user(void) {
  *
  * Every branch returns false, and that is load-bearing -- see the
  * single-dispatch invariant in
- * docs/superpowers/plans/2026-09-01-tmux-control-hand.md. Returning true here
+ * the "Constraints worth knowing" section of this keymap's readme.md. Returning true here
  * would fire each macro twice, because bk_pointing_device.c calls
  * process_record_user() itself in addition to the normal process_record_kb()
  * path.
