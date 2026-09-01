@@ -144,14 +144,14 @@ enum tmux_keycodes {
  *
  *   window prev/next, session prev/next, new window
  *   select pane left/down/up/right, raw prefix
- *   split below, split right, kill pane, zoom, detach
+ *   split below, split right, kill pane, detach, zoom
  *
  * TMX_PFX covers everything without its own key -- s, [, w, k, r.
  */
 #define LAYOUT_LAYER_MEDIA                                                                    \
     TMX_WPRV, TMX_WNXT, TMX_SPRV, TMX_SNXT,  TMX_NEW, XXXXXXX, RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
       TMX_PL,   TMX_PD,   TMX_PU,   TMX_PR,  TMX_PFX, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
-    TMX_SPLD, TMX_SPLR, TMX_KILL, TMX_ZOOM, TMX_DTCH, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
+    TMX_SPLD, TMX_SPLR, TMX_KILL, TMX_DTCH, TMX_ZOOM, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
                       KC_MSTP, KC_MPLY, KC_MSTP, _______, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */

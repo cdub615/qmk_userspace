@@ -91,8 +91,8 @@ Reading the physical Colemak-DH positions:
 | `Z` | `LALT(KC_ENT)` | split below |
 | `X` | `LSA(KC_ENT)` | split right |
 | `C` | `LALT(KC_ESC)` | kill pane |
-| `D` | `TMX_ZOOM` * | toggle zoom (prefix `z`) |
-| `V` | `TMX_DTCH` * | detach (prefix `d`) |
+| `D` | `TMX_DTCH` * | detach (prefix `d`) |
+| `V` | `TMX_ZOOM` * | toggle zoom (prefix `z`) |
 
 Rationale for the row assignment: pane selection is the highest-frequency
 action, so it takes the home row. Window and session movement pair up on the top

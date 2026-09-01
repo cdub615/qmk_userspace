@@ -39,7 +39,7 @@ layers:
            '', RGB Prev, RGB Tog, RGB Next, '']
         - ['Pane ←', 'Pane ↓', 'Pane ↑', 'Pane →', tmux pfx,
            Prev, 'Vol −', Mute, 'Vol +', Next]
-        - ['Split ↓', 'Split →', Kill Pane, Zoom, Detach,
+        - ['Split ↓', 'Split →', Kill Pane, Detach, Zoom,
            '', EE Clear, Pause, '', Boot]
         - [Stop, Play/Pause, Stop,
            { type: held }, Play/Pause]
