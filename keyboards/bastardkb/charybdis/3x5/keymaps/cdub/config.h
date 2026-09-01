@@ -69,3 +69,18 @@
 #    undef AUTO_MOUSE_DEFAULT_LAYER
 #endif
 #define AUTO_MOUSE_DEFAULT_LAYER 3
+
+/* How long each tap_code16() call holds its keycode down.
+ *
+ * QMK defaults this to 0, registering and unregistering in the same breath,
+ * which hosts drop. tap_code16_delay() is register / wait_ms(delay) /
+ * unregister (quantum/quantum.c:154-158), so this is the *hold* duration. It
+ * does NOT insert a gap between consecutive taps -- the boundary between the
+ * two taps in a tmux macro is still zero. Those macros depend on the hold, not
+ * on any inter-tap gap; if a boundary gap is ever needed, add an explicit
+ * wait_ms() between the tap_code16() calls in keymap.c.
+ *
+ * This is firmware-global rather than keymap-local: argos_tapdance.c:108 waits
+ * TAP_CODE_DELAY on tap-dance reset, a no-op at 0 and now 10ms for any argos
+ * tap dance actually configured in EEPROM. */
+#define TAP_CODE_DELAY 10

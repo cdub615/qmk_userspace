@@ -53,6 +53,41 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define SPC_NUM LT(LAYER_NUMERAL, KC_SPC)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 
+/* tmux control hand (Media layer, left side).
+ *
+ * Bindings come from ~/.config/tmux/tmux.conf. Note that most of them are
+ * prefix-free (`bind -n`) Alt / Ctrl+Alt chords, which is why these are plain
+ * mod-wrapped keycodes rather than macros.
+ *
+ * TMX_PFX emits C-b, which is tmux's `prefix2`. The primary prefix is C-Space,
+ * but C-b is unambiguous to emit and cannot be mistaken for an input-method
+ * toggle. */
+#define TMX_PFX  LCTL(KC_B)     // raw prefix, for anything without its own key
+#define TMX_WPRV LALT(KC_LEFT)  // previous window
+#define TMX_WNXT LALT(KC_RGHT)  // next window
+#define TMX_SPRV LALT(KC_UP)    // previous session
+#define TMX_SNXT LALT(KC_DOWN)  // next session
+#define TMX_PL   LCA(KC_LEFT)   // select pane left
+#define TMX_PD   LCA(KC_DOWN)   // select pane down
+#define TMX_PU   LCA(KC_UP)     // select pane up
+#define TMX_PR   LCA(KC_RGHT)   // select pane right
+#define TMX_SPLD LALT(KC_ENT)   // split below
+#define TMX_SPLR LSA(KC_ENT)    // split right
+#define TMX_KILL LALT(KC_ESC)   // kill pane
+
+/* The three commands that genuinely need the tmux prefix.
+ *
+ * QK_USER (0x7E40) is the correct base with VIA enabled. Do not use the
+ * keyboard-level QK_KB range: VIA uses it, and bk_pointing_device already
+ * occupies 0x7E00-0x7E07 (DPI_MOD through DRG_TOG, see that module's
+ * introspection.h). argos claims no keycodes -- it works through the combo,
+ * tap-dance and tapping-term overrides instead. */
+enum tmux_keycodes {
+    TMX_NEW = QK_USER,  // prefix c -- new window
+    TMX_ZOOM,           // prefix z -- toggle pane zoom
+    TMX_DTCH,           // prefix d -- detach session
+};
+
 /* #ifndef POINTING_DEVICE_ENABLE */
 /* #    define DRGSCRL KC_NO */
 /* #    define DPI_MOD KC_NO */
@@ -98,15 +133,25 @@ static uint16_t auto_pointer_layer_timer = 0;
         XXXXXXX, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, HYPR(KC_NO), KC_F1, KC_F2, KC_F3, KC_F10, \
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
 /**
- * \brief Media layer.
+ * \brief Media and tmux layer.
  *
- * Tertiary left- and right-hand layer is media and RGB control.  This layer is
- * symmetrical to accomodate the left- and right-hand trackball.
+ * Held with the right thumb (Bspc), so the left hand is cross-hand -- the
+ * comfortable kind of free space. The right hand keeps media and RGB control.
+ *
+ * The left hand used to mirror the right one exactly, to serve left-handed
+ * trackball builds. This board's trackball is on the right, so those fifteen
+ * keys were dead weight and now drive tmux:
+ *
+ *   window prev/next, session prev/next, new window
+ *   select pane left/down/up/right, raw prefix
+ *   split below, split right, kill pane, zoom, detach
+ *
+ * TMX_PFX covers everything without its own key -- s, [, w, k, r.
  */
 #define LAYOUT_LAYER_MEDIA                                                                    \
-    XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
-    KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
-    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, XXXXXXX, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
+    TMX_WPRV, TMX_WNXT, TMX_SPRV, TMX_SNXT,  TMX_NEW, XXXXXXX, RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
+      TMX_PL,   TMX_PD,   TMX_PU,   TMX_PR,  TMX_PFX, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
+    TMX_SPLD, TMX_SPLR, TMX_KILL, TMX_ZOOM, TMX_DTCH, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
                       KC_MSTP, KC_MPLY, KC_MSTP, _______, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */
@@ -215,6 +260,39 @@ void keyboard_post_init_user(void) {
     if (bkpd_get_auto_mouse_layer_enabled()) {
         bkpd_set_auto_mouse_layer_enabled(false);
     }
+}
+
+/**
+ * \brief Send a tmux prefix followed by a command letter.
+ *
+ * Every branch returns false, and that is load-bearing -- see the
+ * single-dispatch invariant under "Constraints worth knowing" in this
+ * keymap's readme.md. Returning true here would fire each macro twice,
+ * because bk_pointing_device.c calls process_record_user() itself in
+ * addition to the normal process_record_kb() path.
+ */
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    uint16_t command = KC_NO;
+
+    switch (keycode) {
+        case TMX_NEW:
+            command = KC_C;
+            break;
+        case TMX_ZOOM:
+            command = KC_Z;
+            break;
+        case TMX_DTCH:
+            command = KC_D;
+            break;
+        default:
+            return true;  // pass-through only -- custom keycodes MUST return false
+    }
+
+    if (record->event.pressed) {
+        tap_code16(TMX_PFX);
+        tap_code16(command);
+    }
+    return false;
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
