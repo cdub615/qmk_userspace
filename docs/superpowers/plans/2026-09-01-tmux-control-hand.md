@@ -469,6 +469,14 @@ Note that `~/.tmux.conf` is stale and not loaded; the live config is
   `bk_pointing_device.c` calls it from inside its own module hook, in addition
   to the normal `process_record_kb()` path. Handlers must return `false` to
   short-circuit the second dispatch.
+- **The Symbols layer's `LCA(KC_DELETE)` is deliberate.** Hold `Tab`, press
+  `D`, and you send `Ctrl+Alt+Delete`, which Hyprland binds to *close all
+  windows* (`hyprctl binds` shows `modmask=12 key=DELETE`). This is the only
+  non-`SUPER` Hyprland binding that collides with anything this keymap emits.
+  It is kept on purpose -- do not "fix" it.
+- **The tmux hand is inert in copy-mode.** While a pane is in copy-mode the
+  `copy-mode-vi` key table takes precedence over `bind -n`, so every key on
+  the tmux hand except `tmux pfx` does nothing there.
 ```
 
 - [ ] **Step 4: Repoint the `process_record_user()` comment at the readme**
