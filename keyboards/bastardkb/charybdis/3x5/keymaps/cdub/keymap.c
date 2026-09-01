@@ -130,15 +130,25 @@ enum tmux_keycodes {
         XXXXXXX, QK_REBOOT, XXXXXXX, XXXXXXX, XXXXXXX, HYPR(KC_NO), KC_F1, KC_F2, KC_F3, KC_F10, \
                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX
 /**
- * \brief Media layer.
+ * \brief Media and tmux layer.
  *
- * Tertiary left- and right-hand layer is media and RGB control.  This layer is
- * symmetrical to accomodate the left- and right-hand trackball.
+ * Held with the right thumb (Bspc), so the left hand is cross-hand -- the
+ * comfortable kind of free space. The right hand keeps media and RGB control.
+ *
+ * The left hand used to mirror the right one exactly, to serve left-handed
+ * trackball builds. This board's trackball is on the right, so those fifteen
+ * keys were dead weight and now drive tmux:
+ *
+ *   window prev/next, session prev/next, new window
+ *   select pane left/down/up/right, raw prefix
+ *   split below, split right, kill pane, zoom, detach
+ *
+ * TMX_PFX covers everything without its own key -- s, [, w, k, r.
  */
 #define LAYOUT_LAYER_MEDIA                                                                    \
-    XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, XXXXXXX,RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
-    KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
-    XXXXXXX, XXXXXXX, XXXXXXX,  EE_CLR, XXXXXXX, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
+    TMX_WPRV, TMX_WNXT, TMX_SPRV, TMX_SNXT,  TMX_NEW, XXXXXXX, RM_PREV, RM_TOGG, RM_NEXT, XXXXXXX, \
+      TMX_PL,   TMX_PD,   TMX_PU,   TMX_PR,  TMX_PFX, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, \
+    TMX_SPLD, TMX_SPLR, TMX_KILL, TMX_ZOOM, TMX_DTCH, XXXXXXX,  EE_CLR, KC_PAUS, XXXXXXX, QK_BOOT, \
                       KC_MSTP, KC_MPLY, KC_MSTP, _______, KC_MPLY
 
 /** \brief Mouse emulation and pointer functions. */
