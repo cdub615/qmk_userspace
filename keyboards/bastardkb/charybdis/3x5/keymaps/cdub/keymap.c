@@ -53,6 +53,38 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define SPC_NUM LT(LAYER_NUMERAL, KC_SPC)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 
+/* tmux control hand (Media layer, left side).
+ *
+ * Bindings come from ~/.config/tmux/tmux.conf. Note that most of them are
+ * prefix-free (`bind -n`) Alt / Ctrl+Alt chords, which is why these are plain
+ * mod-wrapped keycodes rather than macros.
+ *
+ * TMX_PFX emits C-b, which is tmux's `prefix2`. The primary prefix is C-Space,
+ * but C-b is unambiguous to emit and cannot be mistaken for an input-method
+ * toggle. */
+#define TMX_PFX  LCTL(KC_B)     // raw prefix, for anything without its own key
+#define TMX_WPRV LALT(KC_LEFT)  // previous window
+#define TMX_WNXT LALT(KC_RGHT)  // next window
+#define TMX_SPRV LALT(KC_UP)    // previous session
+#define TMX_SNXT LALT(KC_DOWN)  // next session
+#define TMX_PL   LCA(KC_LEFT)   // select pane left
+#define TMX_PD   LCA(KC_DOWN)   // select pane down
+#define TMX_PU   LCA(KC_UP)     // select pane up
+#define TMX_PR   LCA(KC_RGHT)   // select pane right
+#define TMX_SPLD LALT(KC_ENT)   // split below
+#define TMX_SPLR LSA(KC_ENT)    // split right
+#define TMX_KILL LALT(KC_ESC)   // kill pane
+
+/* The three commands that genuinely need the tmux prefix.
+ *
+ * QK_USER is the correct base with VIA enabled; the keyboard-level QK_KB range
+ * is claimed by VIA and by the argos module. */
+enum tmux_keycodes {
+    TMX_NEW = QK_USER,  // prefix c -- new window
+    TMX_ZOOM,           // prefix z -- toggle pane zoom
+    TMX_DTCH,           // prefix d -- detach session
+};
+
 /* #ifndef POINTING_DEVICE_ENABLE */
 /* #    define DRGSCRL KC_NO */
 /* #    define DPI_MOD KC_NO */
@@ -215,6 +247,40 @@ void keyboard_post_init_user(void) {
     if (bkpd_get_auto_mouse_layer_enabled()) {
         bkpd_set_auto_mouse_layer_enabled(false);
     }
+}
+
+/**
+ * \brief Send a tmux prefix followed by a command letter.
+ *
+ * Every branch returns false, and that is load-bearing -- see the
+ * single-dispatch invariant in
+ * docs/superpowers/plans/2026-09-01-tmux-control-hand.md. Returning true here
+ * would fire each macro twice, because bk_pointing_device.c calls
+ * process_record_user() itself in addition to the normal process_record_kb()
+ * path.
+ */
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    uint16_t command = KC_NO;
+
+    switch (keycode) {
+        case TMX_NEW:
+            command = KC_C;
+            break;
+        case TMX_ZOOM:
+            command = KC_Z;
+            break;
+        case TMX_DTCH:
+            command = KC_D;
+            break;
+        default:
+            return true;
+    }
+
+    if (record->event.pressed) {
+        tap_code16(TMX_PFX);
+        tap_code16(command);
+    }
+    return false;
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {

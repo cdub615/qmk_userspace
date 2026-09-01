@@ -69,3 +69,10 @@
 #    undef AUTO_MOUSE_DEFAULT_LAYER
 #endif
 #define AUTO_MOUSE_DEFAULT_LAYER 3
+
+/* Gap between the register and unregister of a tap_code16() call.
+ *
+ * QMK defaults this to 0. The tmux macros in keymap.c send the prefix and then
+ * a letter back to back, and a zero-length gap is unreliable across that
+ * boundary. Nothing else in this keymap taps codes programmatically. */
+#define TAP_CODE_DELAY 10
